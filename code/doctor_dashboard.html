@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Doctor Dashboard</title>
+    <style>
+    /* General styling */
+    body {
+        font-family: Arial, sans-serif;
+        margin: 0;
+        padding: 0;
+        background-color: #f4f4f4;
+    }
+
+    .header {
+        background-color:#ddd5f3;
+        color: black;
+        padding: 15px 10px;
+        text-align: center;
+        font-size: 24px;
+    }
+
+    .nav-links {
+        margin-top: 10px;
+    }
+
+    .nav-links a {
+        color: black;
+        text-decoration: none;
+        margin: 0 10px;
+    }
+
+    .nav-links a:hover {
+        text-decoration: underline;
+    }
+
+    .main-container {
+        padding: 20px;
+        max-width: 600px;
+        margin: 20px auto;
+        background-color: white;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        border-radius: 5px;
+    }
+
+    .main-container h2 {
+        text-align: center;
+        margin-bottom: 20px;
+        color: #333;
+    }
+
+    form {
+        display: flex;
+        flex-direction: column;
+        gap: 15px;
+    }
+
+    form label {
+        font-weight: bold;
+        color: #555;
+    }
+
+    form input[type="text"] {
+        padding: 10px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        font-size: 16px;
+    }
+
+    form button {
+        padding: 10px;
+        background-color:#ddd5f3;
+        color: black;
+        border: none;
+        border-radius: 5px;
+        font-size: 16px;
+        cursor: pointer;
+    }
+
+    form button:hover {
+        background-color: white;
+    }
+
+    /* Reports container */
+    #reports-container {
+        margin-top: 20px;
+    }
+
+    .report {
+        border: 1px solid #ddd;
+        padding: 15px;
+        margin: 10px 0;
+        border-radius: 5px;
+        background-color: #f9f9f9;
+    }
+
+    .report h3 {
+        margin: 0 0 10px;
+        color: #333;
+    }
+
+    .report p {
+        margin: 5px 0;
+        color: #555;
+    }
+
+    .report img {
+        max-width: 100%;
+        height: auto;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+    }
+
+    .report iframe {
+        width: 100%;
+        height: 500px;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+    }
+
+    </style>
+    <script>
+        function navigateTo(page) {
+            window.location.href = page;
+        }
+
+        function getPatientReports() {
+            const patientId = document.getElementById('patient-id').value.trim();
+            console.log('Fetching reports for patient ID:', patientId);
+
+            const reports = JSON.parse(localStorage.getItem(patientId)) || [];
+
+            const reportsContainer = document.getElementById('reports-container');
+            reportsContainer.innerHTML = '';
+
+            if (reports.length === 0) {
+                reportsContainer.innerHTML = '<p>No reports found for this patient.</p>';
+                return;
+            }
+
+            reports.forEach(report => {
+                const reportDiv = document.createElement('div');
+                reportDiv.classList.add('report');
+
+                if (report.content.startsWith('data:image')) {
+                    reportDiv.innerHTML = `
+                        <h3>Report Name: ${report.name}</h3>
+                        <p>Date: ${new Date(report.date).toLocaleString()}</p>
+                        <img src="${report.content}" alt="${report.name}">
+                    `;
+                } else if (report.content.startsWith('data:application/pdf')) {
+                    reportDiv.innerHTML = `
+                        <h3>Report Name: ${report.name}</h3>
+                        <p>Date: ${new Date(report.date).toLocaleString()}</p>
+                        <iframe src="${report.content}" title="${report.name}"></iframe>
+                    `;
+                }
+
+                reportsContainer.appendChild(reportDiv);
+            });
+        }
+
+        // Sample data for testing purposes
+        function addSampleReport(patientId) {
+            const sampleReports = [
+                {
+                    name: 'presc.png',
+                    content: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAA1I...',
+                    date: '2024-06-30T17:22:12.018Z'
+                },
+                {
+                    name: 'report.pdf',
+                    content: 'data:application/pdf;base64,JVBERi0xLjQKJ...',
+                    date: '2024-06-30T17:22:12.018Z'
+                }
+            ];
+            localStorage.setItem(patientId, JSON.stringify(sampleReports));
+        }
+
+        // Add sample reports for testing
+        addSampleReport('patient123');
+    </script>
+</head>
+<body>
+    <header class="header">
+        <h1>Doctor Dashboard</h1>
+        <div class="nav-links">
+            <a href="interface.html">Logout</a>
+        </div>
+    </header>
+    
+    <div class="main-container">
+        <h2>Search Patient Reports</h2>
+        <form onsubmit="getPatientReports(); return false;">
+            <label for="patient-id">Enter Patient ID</label>
+            <input type="text" id="patient-id" name="patient-id" required>
+            <button type="submit">Search</button>
+        </form>
+        <div id="reports-container"></div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Patient Dashboard</title>
+    <style>
+        /* Basic reset for margin and padding */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            background-image: url('https://www.humanitas.net/content/uploads/2017/10/medical-care.jpg');
+            background-repeat: no-repeat;
+            background-size: 100% 150%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+        }
+
+        .container {
+            background: #fff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            width: 90%;
+            max-width: 600px;
+        }
+
+        h2 {
+            margin-bottom: 20px;
+            color: #333;
+        }
+
+        .user-id, .user-name {
+            margin-bottom: 20px;
+            font-size: 1.2em;
+            color: #555;
+        }
+
+        .button-container {
+            display: flex;
+            justify-content: space-around;
+        }
+
+        .button-container button {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            background: #007bff;
+            color: white;
+            font-size: 1em;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+
+        .button-container button:hover {
+            background: #0056b3;
+        }
+
+        .add-reports-container {
+            margin-top: 50px;
+        }
+
+        .report-section {
+            background: #f9f9f9;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+            transition: transform 0.2s ease-in-out;
+        }
+
+        .report-section:hover {
+            transform: translateY(-5px);
+        }
+
+        h3 {
+            margin-bottom: 10px;
+            color: #007bff;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .plus-symbol {
+            font-size: 1.5em;
+            cursor: pointer;
+            color: #007bff;
+            margin-left: 10px;
+            transition: color 0.3s ease;
+        }
+
+        .plus-symbol:hover {
+            color: #0056b3;
+        }
+
+        .file-list {
+            margin-top: 10px;
+            list-style-type: none;
+            padding: 0;
+        }
+
+        .file-list li {
+            margin-bottom: 5px;
+            padding: 5px;
+            background: #fff;
+            border-radius: 4px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .file-list li span {
+            flex-grow: 1;
+            padding: 5px 10px;
+            cursor: pointer;
+            color: #007bff;
+            text-decoration: underline;
+        }
+
+        .file-list li .file-date {
+            flex-shrink: 0;
+            padding: 5px 10px;
+            color: #666;
+        }
+
+        .file-list li button {
+            background: #dc3545;
+            border: none;
+            color: white;
+            padding: 5px 10px;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background 0.3s ease;
+        }
+
+        .file-list li button:hover {
+            background: #c82333;
+        }
+        .header {
+            color: black;
+            padding: 1px;
+            text-align: center;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            position: fixed;
+            top: 0;
+            width: 100%;
+            z-index: 1000;
+            margin: 0;
+            font-size: 20px;
+            padding-left: 90%;
+        }
+    </style>
+</head>
+<body>
+    <header class="header"><a href="interface.html">Logout</a></header>
+    <div class="container">
+        <h2>Patient Dashboard</h2>
+        <div class="user-name" id="userName"></div>
+        <div class="user-id" id="userId"></div>
+        <div class="button-container">
+            <button onclick="showAddReports()">Add Reports</button>
+        </div>
+        <div class="add-reports-container" id="addReportsContainer" style="display: none;">
+            <h2>Add Reports</h2>
+            <div class="report-section">
+                <h3>Prescriptions <span class="plus-symbol" onclick="addReport('prescriptions')">+</span></h3>
+                <ul class="file-list" id="prescriptions-list"></ul>
+            </div>
+            <div class="report-section">
+                <h3>Blood Reports <span class="plus-symbol" onclick="addReport('blood-reports')">+</span></h3>
+                <ul class="file-list" id="blood-reports-list"></ul>
+            </div>
+            <div class="report-section">
+                <h3>X-Rays <span class="plus-symbol" onclick="addReport('x-rays')">+</span></h3>
+                <ul class="file-list" id="x-rays-list"></ul>
+            </div>
+            <div class="report-section">
+                <h3>CT Scans <span class="plus-symbol" onclick="addReport('ct-scans')">+</span></h3>
+                <ul class="file-list" id="ct-scans-list"></ul>
+            </div>
+            <div class="report-section">
+                <h3>Other Reports <span class="plus-symbol" onclick="addReport('other-reports')">+</span></h3>
+                <ul class="file-list" id="other-reports-list"></ul>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function generateUniqueId() {
+            const timestamp = Date.now(); // Current timestamp in milliseconds
+            const randomNum = Math.floor(Math.random() * 1000000); // Random number between 0 and 999999
+            return `PAT${timestamp}${randomNum}`; // Concatenate to form the unique ID
+        }
+
+        // Check if user is accessing the dashboard via sign-up or login
+        const urlParams = new URLSearchParams(window.location.search);
+        const isSignUp = urlParams.get('signup');
+        const userIdElement = document.getElementById('userId');
+        const userNameElement = document.getElementById('userName');
+
+        let userDetails = JSON.parse(localStorage.getItem('userDetails')) || { name: '', userId: '' };
+
+        if (isSignUp) {
+            const userId = generateUniqueId();
+            userDetails.userId = userId;
+            localStorage.setItem('userDetails', JSON.stringify(userDetails)); // Store the updated details in local storage
+            userIdElement.textContent = `User ID: ${userId}`;
+            userNameElement.textContent = `Welcome ${userDetails.name}`;
+        } else {
+            userIdElement.textContent = `User ID: ${userDetails.userId}`;
+            userNameElement.textContent = `Welcome ${userDetails.name}`;
+        }
+        function getCurrentUser() {
+            const email = sessionStorage.getItem('currentUser');
+            if (!email) {
+                alert('No user is currently logged in.');
+                navigateTo('patient_login.html');
+                return null;
+            }
+            return email;
+        }
+
+        function displayUserInfo() {
+            const email = getCurrentUser();
+            if (email) {
+                document.getElementById('user-email').textContent = email;
+            }
+        }
+
+        function logoutUser() {
+            const email = getCurrentUser();
+            if (email) {
+                const users = JSON.parse(localStorage.getItem('users')) || [];
+                const userIndex = users.findIndex(user => user.email === email);
+                if (userIndex !== -1) {
+                    users[userIndex].active = false; // Mark user as inactive
+                    localStorage.setItem('users', JSON.stringify(users));
+                }
+                sessionStorage.removeItem('currentUser');
+                navigateTo('patient_login.html');
+            }
+        }
+
+        function navigateTo(page) {
+            window.location.href = page;
+        }
+
+        window.onload = displayUserInfo;
+        function showAddReports() {
+            document.getElementById('addReportsContainer').style.display = 'block';
+        }
+        const loggedInUser = userDetails;
+
+        function addReport(type) {
+            const fileInput = document.createElement('input');
+            fileInput.type = 'file';
+            fileInput.accept = 'image/*,application/pdf';
+            fileInput.onchange = function(event) {
+                const file = event.target.files[0];
+                if (file) {
+                    saveReport(type, file);
+                    displayReport(type, file, new Date());
+                }
+            };
+            fileInput.click();
+        }
+
+        function saveReport(type, file) {
+            const reader = new FileReader();
+            reader.onload = function(event) {
+                const reports = JSON.parse(localStorage.getItem(`${loggedInUser.userId}-${type}`)) || [];
+                const reportDate = new Date();
+                reports.push({ name: file.name, content: event.target.result, date: reportDate });
+                reports.sort((a, b) => new Date(b.date) - new Date(a.date));
+                localStorage.setItem(`${loggedInUser.userId}-${type}`, JSON.stringify(reports));
+            };
+            reader.readAsDataURL(file);
+        }
+
+        function displayReport(type, file, date) {
+            const list = document.getElementById(`${type}-list`);
+            const listItem = document.createElement('li');
+            const formattedDate = new Date(date).toLocaleDateString();
+            listItem.innerHTML = `<span onclick="viewReport('${type}', '${file.name}')">${file.name}</span><span class="file-date">${formattedDate}</span><button onclick="deleteReport('${type}', '${file.name}')">Delete</button>`;
+            list.appendChild(listItem);
+        }
+
+        function deleteReport(type, name) {
+            const reports = JSON.parse(localStorage.getItem(`${loggedInUser.userId}-${type}`)) || [];
+            const updatedReports = reports.filter(report => report.name !== name);
+            localStorage.setItem(`${loggedInUser.userId}-${type}`, JSON.stringify(updatedReports));
+            document.location.reload();
+        }
+
+        function viewReport(type, name) {
+            const reports = JSON.parse(localStorage.getItem(`${loggedInUser.userId}-${type}`)) || [];
+            const report = reports.find(report => report.name === name);
+            if (report) {
+                const newWindow = window.open();
+                newWindow.document.write(`<iframe src="${report.content}" width="100%" height="100%" style="border:none;"></iframe>`);
+            }
+        }
+
+        function loadReports() {
+            const types = ['prescriptions', 'blood-reports', 'x-rays', 'ct-scans', 'other-reports'];
+            types.forEach(type => {
+                const reports = JSON.parse(localStorage.getItem(`${loggedInUser.userId}-${type}`)) || [];
+                reports.forEach(report => displayReport(type, { name: report.name }, report.date));
+            });
+        }
+
+        window.onload = loadReports;
+    </script>
+</body>
+</html>

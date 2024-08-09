@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Patient Signup</title>
+    <link rel="stylesheet" href="styles.css">
+    <script>
+         function navigateTo(page) {
+            window.location.href = page;
+        }
+
+        function emailExists(email) {
+            const users = JSON.parse(localStorage.getItem('users')) || [];
+            return users.some(user => user.email === email);
+        }
+
+        function storeUserDetails() {
+            const name = document.getElementById('patient-name').value;
+            const phoneNumber = document.getElementById('phno').value;
+            const age = document.getElementById('age').value;
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+
+            if (emailExists(email)) {
+                alert('This email is already used. Please use a different email.');
+                return;
+            }
+
+            const userDetails = {
+                name: name,
+                phoneNumber: phoneNumber,
+               age: age,
+                email: email,
+                password: password,
+                userId: null // To be set later on the dashboard page if signup=true
+            };
+
+            const users = JSON.parse(localStorage.getItem('users')) || [];
+            users.push(userDetails);
+            localStorage.setItem('users', JSON.stringify(users));
+
+            localStorage.setItem('userDetails', JSON.stringify(userDetails));
+            navigateTo('patient_dashboard.html?signup=true');
+        }
+    </script>
+</head>
+<body>
+    <header class="header">
+        <h1>MediTrack</h1>
+        <div class="nav-links">
+            <div class="dropdown">
+                <a href="#">Login</a>
+                <div class="dropdown-content">
+                    <a href="#" onclick="navigateTo('patient_login.html')">Patient</a>
+                    <a href="#" onclick="navigateTo('doctor_login.html')">Doctor</a>
+                </div>
+            </div>
+            <div class="dropdown">
+                <a href="#">Sign Up</a>
+                <div class="dropdown-content">
+                    <a href="#" onclick="navigateTo('patient_signup.html')">Patient</a>
+                    <a href="#" onclick="navigateTo('doctor_signup.html')">Doctor</a>
+                </div>
+            </div>
+        </div>
+    </header>
+    
+    <div class="main-container">
+        <div class="image-container">
+            <img src="https://static.vecteezy.com/system/resources/previews/024/760/222/non_2x/patient-with-doctor-and-nurse-ai-generated-free-png.png">
+            <h2>MediTrack</h2>
+            <p>Make your Appointments easier</p>
+        </div>
+        <div class="signup-container">
+            <h2>Patient Signup</h2>
+            <form onsubmit="storeUserDetails(); return false;">
+                <label for="patient-name">Name</label>
+                <input type="text" id="patient-name" name="patient-name" required>
+                <label for="phno">Phone Number</label>
+                <input type="text" id="phno" name="phno" required>
+                <label for="age">Age</label>
+                <input type="text" id="age" name="age" required>
+                <label for="email">Email</label>
+                <input type="email" id="email" name="email" required>
+                <label for="password">Password*</label>
+                <input type="password" id="password" name="password" required>
+                <label for="reenter-password">Re-enter Password*</label>
+                <input type="password" id="reenter-password" name="reenter-password" required>
+                <button type="submit">Sign up</button>
+                <div class="separator"><span>or</span></div>
+                <div class="links">
+                    <a href="#">Sign in with Google</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Medical Info Tracker</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: #ddd5f3;
+        }
+        .header {
+            background-color: #ddd5f3;
+            color: black;
+            padding: 10px;
+            text-align: center;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            position: fixed;
+            top: 0;
+            width: 99%;
+            z-index: 1000;
+        }
+        .header h1 {
+            margin: 0;
+            font-size: 24px;
+        }
+        .nav-links {
+            display: flex;
+            flex-wrap: wrap;
+        }
+        .nav-links a {
+            color: black;
+            text-decoration: none;
+            margin: 0 30px;
+            font-size: 20px;
+        }
+        .container {
+            padding: 80px 20px 20px; /* Adjusted padding to account for fixed header */
+        }
+        .section {
+            margin: 20px 0;
+            position: relative;
+            text-align: center;
+        }
+        .section img {
+            padding-top: 12%;
+            width: 100%;
+            height: 400px;
+        }
+        .section1 img {
+            padding-top: 8%;
+            width: 200px;
+            height: 200px;
+            padding-left: 10%;
+
+        }
+        .text-overlay {
+            position: absolute;
+            top: 12%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: white;
+            background-color: #ff00ff;
+            padding: 10px;
+            border-radius: 5px;
+            max-width: 80%;
+            font-family:Lucida Bright;
+            font-size : 20px;
+        }
+        .text-overlay1 {
+            position: absolute;
+            top: 110%;
+            left: 45%;
+            color: grey;
+            padding: 10px;
+            border-radius: 5px;
+            max-width: 100%;
+            font-family:Didot;
+            font-size : 25px;
+        }
+        .section2{
+            position: absolute;
+            left:15%;
+            color: grey;
+            padding: 10px;
+            border-radius: 5px;
+            max-width: 100%;
+            font-family:Didot;
+            font-size : 30px;
+        }
+        .dropdown-content {
+            display: none;
+            position: absolute;
+            background-color: #f9f9f9;
+            min-width: 160px;
+            box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+            z-index: 1;
+        }
+        .dropdown:hover .dropdown-content {
+            display: block;
+        }
+        .dropdown-content a {
+            color: black;
+            padding: 12px 16px;
+            text-decoration: none;
+            display: block;
+            text-align: left;
+        }
+        .dropdown-content a:hover {
+            background-color: #f1f1f1;
+        }
+        .dropdown {
+            position: relative;
+            display: inline-block;
+            margin: 10px 0;
+        }
+        @media (max-width: 600px) {
+            .header h1 {
+                font-size: 18px;
+            }
+            .nav-links a {
+                font-size: 16px;
+                margin: 5px;
+            }
+            .text-overlay {
+                font-size: 14px;
+            }
+        }
+        .info-section {
+            text-align: center;
+            background-color:#ddd5f3;
+            padding: 40px 20px;
+            color: grey;
+        }
+        .info-section h2 {
+            font-size: 24px;
+            margin-bottom: 20px;
+            font-family:Garamond;
+            font-size : 40px;
+        }
+        .info-cards {
+            display: flex;
+            flex-wrap: wrap;
+        }
+        .info-cards1 {
+            display: flex;
+            flex-wrap: wrap;
+            padding-top: 150px;
+        }
+        .info-card {
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            margin: 10px;
+            padding: 20px;
+            width: 240px;
+            text-align: center;
+        }
+        .info-card1 {
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            margin: 10px;
+            padding: 20px;
+            width: 340px;
+            text-align: center;
+        }
+        .info-card img {
+            width: 150px;
+            height: auto;
+            margin-bottom: 10px;
+        }
+        .info-card1 img {
+            width: 100px;
+            height: auto;
+            margin-bottom: 10px;
+        }
+        .info-card h3 {
+            font-size: 20px;
+            color: #ff00ff;
+            margin-bottom: 10px;}
+
+            .info-card1 h3 {
+            font-size: 20px;
+            color: black;
+            margin-bottom: 10px;
+        }
+        .info-card p {
+            font-size: 18px;
+        }
+        .container1 {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            text-align: center;
+        }
+
+        .container1 h2 {
+            font-size: 2.5em;
+            margin-bottom: 20px;
+            color: #333;
+        }
+
+        .how {
+            display: inline-block;
+            width: 25%;
+            margin: 10px;
+            padding: 20px;
+            background: #ddd5f3;
+        }
+
+        .how img {
+            max-width: 200px;
+            margin-bottom: 15px;
+        }
+
+        .how h4 {
+            font-size: 30px;
+            margin-bottom: 10px;
+            color: #333;
+        }
+
+        .how p {
+            font-size: 30px;
+            color: #666;
+        }
+
+    </style>
+    <script>
+        function navigateTo(page) {
+            window.location.href = page;
+        }
+    </script>
+</head>
+<body>
+    <header class="header">
+        <h1>MediTrack</h1>
+        <div class="nav-links">
+            <div class="dropdown">
+                <a href="#">Login</a>
+                <div class="dropdown-content">
+                    <a href="#" onclick="navigateTo('patient_login.html')">Patient</a>
+                    <a href="#" onclick="navigateTo('doctor_login.html')">Doctor</a>
+                </div>
+            </div>
+            <div class="dropdown">
+                <a href="#">Sign Up</a>
+                <div class="dropdown-content">
+                    <a href="#" onclick="navigateTo('patient_signup.html')">Patient</a>
+                    <a href="#" onclick="navigateTo('doctor_signup.html')">Doctor</a>
+                </div>
+            </div>
+        </div>
+    </header>
+    <div class="container">
+        <div class="section">
+            <img src="https://mapmyhealth.in/assets/newwebsite/images/Physical%20records%20transforming%20into%20electronic%20health%20record.png" alt="Transform Healthcare">
+            <div class="text-overlay">
+                <h2>Transform Your Healthcare Experience With MedicTrack</h2>
+            </div>
+        </div>
+        <div class="section1">
+           <img src="https://health-e.in/wp-content/uploads/2022/10/layer1.svg" alt="Health Information">
+            <div class="text-overlay1">
+                <h2>All Your Health Information in One Place, Accessible Anywhere, Anytime.</h2>
+                <p>No more carrying bulky medical records for doctor’s appointments! Empower your caregiver with your entire medical history from a single platform and get the best possible care in a timely manner.</p>
+            </div>
+        </div>
+    </div>
+    <div class="info-section">
+        <h2>Your Source for Safe Health Records</h2>
+        <div class="info-cards">
+            <div class="info-card">
+                <img src="https://mapmyhealth.in/assets/newwebsite/images/Accurate%20Information%20through%20this%20EHR.png" alt="Accurate Information">
+                <h3>Accurate Information</h3>
+                <p>Provide accurate, up-to-date, and complete health information about patients.</p>
+            </div>
+            <div class="info-card">
+                <img src="https://mapmyhealth.in/assets/newwebsite/images/Provide%20information%20to%20health%20provider.png" alt="Help Health Providers">
+                <h3>Help Health Providers</h3>
+                <p>Helping Doctors effectively diagnose the patients, reduce errors and prescribe accurate treatments.</p>
+            </div>
+            <div class="info-card">
+                <img src="https://mapmyhealth.in/assets/newwebsite/images/Electronic%20Health%20Records%20Privacy%20and%20Security%20.png" alt="Privacy and Security">
+                <h3>Privacy and Security</h3>
+                <p>Enhancing privacy and security of patient and family's medical records.</p>
+            </div>
+            <div class="info-card">
+                <img src="https://mapmyhealth.in/assets/newwebsite/images/EHR%20sharable.png" alt="Sharing Power">
+                <h3>Sharing Power</h3>
+                <p>The ability to share personal health record anywhere at anytime via mobile for better and timely decision making.</p>
+            </div>
+        </div>
+    </div>
+    <section><div class="container1">
+        <h2>How Does Health-e Work?</h2>
+        <div class="how">
+            <img src="https://health-e.in/wp-content/uploads/2023/03/download-app.svg">
+            <h4>Step 1</h4>
+            <p>Signup in Website  & create your health profile </p>
+        </div>
+        <div class="how">
+            <img src="https://health-e.in/wp-content/uploads/2023/03/scan-details.svg">
+            <h4>Step 2</h4>
+            <p>Scan & upload your medical records for instant access</p>
+        </div>
+        <div class="how">
+            <img src="https://health-e.in/wp-content/uploads/2023/03/monitor-key.svg">
+            <h4>Step 3</h4>
+            <p>Monitor your key parameters & take charge of your health</p>
+        </div>
+        </div>
+        <div class="section2">
+            <center> <h2>Your Medical Records at your fingertips and<br>
+                 Access anytime, anywhere</h2></center>
+         </div>
+    <div class="info-section">
+        <div class="info-cards1">
+            <div class="info-card1">
+                <img src="https://health-e.in/wp-content/uploads/2022/10/01-align-center.svg" alt="Accurate Information">
+                <h3>Simplified digital health locker</h3>
+            </div>
+            <div class="info-card1">
+                <img src="https://health-e.in/wp-content/uploads/2022/10/pulse.svg" alt="Accurate Information">
+                <h3>Personalized
+                    health monitoring</h3>
+            </div>
+            <div class="info-card1">
+                <img src="https://health-e.in/wp-content/uploads/2022/10/doctor.svg" alt="Accurate Information">
+                <h3>Preventative healthcare solutions</h3>
+            </div>
+        </div>
+    </div>  
+</body>
+</html>

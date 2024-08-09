@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add Reports</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f2f5;
+            padding: 20px;
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        .container {
+            background: #fff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            max-width: 800px;
+            width: 100%;
+        }
+
+        h2 {
+            text-align: center;
+            margin-bottom: 20px;
+            color: #333;
+        }
+
+        .report-section {
+            background: #f9f9f9;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+            transition: transform 0.2s ease-in-out;
+        }
+
+        .report-section:hover {
+            transform: translateY(-5px);
+        }
+
+        h3 {
+            margin-bottom: 10px;
+            color: #007bff;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .plus-symbol {
+            font-size: 1.5em;
+            cursor: pointer;
+            color: #007bff;
+            margin-left: 10px;
+            transition: color 0.3s ease;
+        }
+
+        .plus-symbol:hover {
+            color: #0056b3;
+        }
+
+        .file-list {
+            margin-top: 10px;
+            list-style-type: none;
+            padding: 0;
+        }
+
+        .file-list li {
+            margin-bottom: 5px;
+            padding: 5px;
+            background: #fff;
+            border-radius: 4px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .file-list li span {
+            flex-grow: 1;
+            padding: 5px 10px;
+            cursor: pointer;
+            color: #007bff;
+            text-decoration: underline;
+        }
+
+        .file-list li .file-date {
+            flex-shrink: 0;
+            padding: 5px 10px;
+            color: #666;
+        }
+
+        .file-list li button {
+            background: #dc3545;
+            border: none;
+            color: white;
+            padding: 5px 10px;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background 0.3s ease;
+        }
+
+        .file-list li button:hover {
+            background: #c82333;
+        }
+
+        .header {
+            background-color: #ddd5f3;
+            color: black;
+            padding: 10px;
+            text-align: center;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            position: fixed;
+            top: 0;
+            width: 100%;
+            z-index: 1000;
+            margin: 0;
+            font-size: 20px;
+        }
+    </style>
+</head>
+<body>
+    <header class="header"><a href="interface.html">Logout</a></header>
+    <div class="container">
+        <h2>Add Reports</h2>
+        <div class="report-section">
+            <h3>Prescriptions <span class="plus-symbol" onclick="addReport('prescriptions')">+</span></h3>
+            <ul class="file-list" id="prescriptions-list"></ul>
+        </div>
+        <div class="report-section">
+            <h3>Blood Reports <span class="plus-symbol" onclick="addReport('blood-reports')">+</span></h3>
+            <ul class="file-list" id="blood-reports-list"></ul>
+        </div>
+        <div class="report-section">
+            <h3>X-Rays <span class="plus-symbol" onclick="addReport('x-rays')">+</span></h3>
+            <ul class="file-list" id="x-rays-list"></ul>
+        </div>
+        <div class="report-section">
+            <h3>CT Scans <span class="plus-symbol" onclick="addReport('ct-scans')">+</span></h3>
+            <ul class="file-list" id="ct-scans-list"></ul>
+        </div>
+        <div class="report-section">
+            <h3>Other Reports <span class="plus-symbol" onclick="addReport('other-reports')">+</span></h3>
+            <ul class="file-list" id="other-reports-list"></ul>
+        </div>
+    </div>
+    <script>
+        const loggedInUser = JSON.parse(localStorage.getItem('loggedInUser')) || { email: '', uid: '' };
+
+        function addReport(type) {
+            const fileInput = document.createElement('input');
+            fileInput.type = 'file';
+            fileInput.accept = 'image/*,application/pdf';
+            fileInput.onchange = function(event) {
+                const file = event.target.files[0];
+                if (file) {
+                    saveReport(type, file);
+                    displayReport(type, file, new Date());
+                }
+            };
+            fileInput.click();
+        }
+
+        function saveReport(type, file) {
+            const reader = new FileReader();
+            reader.onload = function(event) {
+                const reports = JSON.parse(localStorage.getItem(`${loggedInUser.uid}-${type}`)) || [];
+                const reportDate = new Date();
+                reports.push({ name: file.name, content: event.target.result, date: reportDate });
+                reports.sort((a, b) => new Date(b.date) - new Date(a.date));
+                localStorage.setItem(`${loggedInUser.uid}-${type}`, JSON.stringify(reports));
+            };
+            reader.readAsDataURL(file);
+        }
+
+        function displayReport(type, file, date) {
+            const list = document.getElementById(`${type}-list`);
+            const listItem = document.createElement('li');
+            const formattedDate = new Date(date).toLocaleDateString();
+            listItem.innerHTML = `<span onclick="viewReport('${type}', '${file.name}')">${file.name}</span><span class="file-date">${formattedDate}</span><button onclick="deleteReport('${type}', '${file.name}', this)">Delete</button>`;
+            list.appendChild(listItem);
+        }
+
+        function viewReport(type, fileName) {
+            const reports = JSON.parse(localStorage.getItem(`${loggedInUser.uid}-${type}`)) || [];
+            const report = reports.find(report => report.name === fileName);
+            if (report) {
+                const win = window.open();
+                win.document.write(`<iframe src="${report.content}" frameborder="0" style="width:100%; height:100%;"></iframe>`);
+            }
+        }
+
+        function deleteReport(type, fileName, button) {
+            const reports = JSON.parse(localStorage.getItem(`${loggedInUser.uid}-${type}`)) || [];
+            const updatedReports = reports.filter(report => report.name !== fileName);
+            localStorage.setItem(`${loggedInUser.uid}-${type}`, JSON.stringify(updatedReports));
+            button.parentElement.remove();
+        }
+
+        function loadReports() {
+            ['prescriptions', 'blood-reports', 'x-rays', 'ct-scans', 'other-reports'].forEach(type => {
+                const reports = JSON.parse(localStorage.getItem(`${loggedInUser.uid}-${type}`)) || [];
+                reports.forEach(report => displaySavedReport(type, report));
+            });
+        }
+
+        function displaySavedReport(type, report) {
+            const list = document.getElementById(`${type}-list`);
+            const formattedDate = new Date(report.date).toLocaleDateString();
+            const listItem = document.createElement('li');
+            listItem.innerHTML = `<span onclick="viewReport('${type}', '${report.name}')">${report.name}</span><span class="file-date">${formattedDate}</span><button onclick="deleteReport('${type}', '${report.name}', this)">Delete</button>`;
+            list.appendChild(listItem);
+        }
+
+        document.addEventListener('DOMContentLoaded', loadReports);
+    </script>
+</body>
+</html>
